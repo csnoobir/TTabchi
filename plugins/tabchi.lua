@@ -173,7 +173,15 @@ if redis:get("botBOT-IDaddmsg") then
 				local answer = redis:get("botBOT-IDaddmsgtext") or "اددی گلم خصوصی پیام بده"
 				send(msg.chat_id_, msg.id_, answer)
 			end
-
+				elseif text:match("^(افزودن با شماره) (.*)$") then
+					local matches = text:match("افزودن با شماره (.*)$")
+					if matches == "روشن" then
+						redis:set("botBOT-IDaddcontact", true)
+						return send(msg.chat_id_, msg.id_, "<i>ارسال شماره هنگام افزودن مخاطب فعال شد</i>")
+					elseif matches == "خاموش" then
+						redis:del("botBOT-IDaddcontact")
+						return send(msg.chat_id_, msg.id_, "<i>ارسال شماره هنگام افزودن مخاطب غیرفعال شد</i>")
+					end
 
 
 function run(msg,matches)
