@@ -170,20 +170,32 @@ function rem(id)
 	return true
 end
 if redis:get("botBOT-IDaddmsg") then
-				local answer = redis:get("botBOT-IDaddmsgtext") or "اددی گلم خصوصی پیام بده"
+				local answer = redis:get("botBOT-IDaddmsgtext") or "Add Shodi :D"
 				send(msg.chat_id_, msg.id_, answer)
 			end
-				elseif text:match("^(افزودن با شماره) (.*)$") then
-					local matches = text:match("افزودن با شماره (.*)$")
-					if matches == "روشن" then
+			elseif text:match("^(addnum) (.*)$") then
+					local matches = text:match("addnum (.*)$")
+					if matches == "on" then
 						redis:set("botBOT-IDaddcontact", true)
-						return send(msg.chat_id_, msg.id_, "<i>ارسال شماره هنگام افزودن مخاطب فعال شد</i>")
-					elseif matches == "خاموش" then
+						return send(msg.chat_id_, msg.id_, "<i>Ersale shomare: on</i>")
+					elseif matches == "off" then
 						redis:del("botBOT-IDaddcontact")
-						return send(msg.chat_id_, msg.id_, "<i>ارسال شماره هنگام افزودن مخاطب غیرفعال شد</i>")
+						return send(msg.chat_id_, msg.id_, "<i>Ersale Shomare: off</i>")
 					end
-
-
+	elseif text:match("^(addall) (%d+)$") then
+					local matches = text:match("%d+")
+					local list = {redis:smembers("botBOT-IDgroups"),redis:smembers("botBOT-IDsupergroups")}
+					for a, b in pairs(list) do
+						for i, v in pairs(b) do 
+							tdcli_function ({
+								ID = "AddChatMember",
+								chat_id_ = v,
+								user_id_ = matches,
+								forward_limit_ =  50
+							}, dl_cb, nil)
+						end	
+					end
+					return send(msg.chat_id_, msg.id_, "<i>add all anjam shod</i>")	
 function run(msg,matches)
   if matches[1] == "setphoto" and msg.reply_id and is_sudo(msg) then
     load_photo(msg.reply_id, set_bot_photo, msg)
