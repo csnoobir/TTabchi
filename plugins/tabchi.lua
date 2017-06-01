@@ -1,6 +1,5 @@
 
 
-
 local function parsed_url(link)
   local parsed_link = URL.parse(link)
   local parsed_path = URL.parse_path(parsed_link.path)
@@ -134,68 +133,10 @@ function stats(cb_extra, success, result)
   for k,v in pairs(result) do
     i = i+1
   end
-  local text = "<b>👲🏻Users </b>: "..users2.."\n<b>🔑Private Messages </b>: "..pvmsgs.."\n\n<b>💠Groups </b>: "..gps2.."\n<b>Groups Messages </b>: "..gpmsgs.."\n\n<b>🏮SuperGroups </b>: "..sgps2.."\n<b>SuperGroup Messages </b>: "..sgpmsgs.."\n\n<b>💢Total Saved Links </b>: "..#links.."\n<b>🔃Total Saved Contacts </b>: "..i
+  local text = "<b>Users </b>: "..users2.."\n<b>Private Messages </b>: "..pvmsgs.."\n\n<b>Groups </b>: "..gps2.."\n<b>Groups Messages </b>: "..gpmsgs.."\n\n<b>SuperGroups </b>: "..sgps2.."\n<b>SuperGroup Messages </b>: "..sgpmsgs.."\n\n<b>Total Saved Links </b>: "..#links.."\n<b>Total Saved Contacts </b>: "..i
   send_large_msg(get_receiver(cb_extra.msg),text, ok_cb, false)
 end
-function add(id)
-	local Id = tostring(id)
-	if not redis:sismember("botBOT-IDall", id) then
-		if Id:match("^(%d+)$") then
-			redis:sadd("botBOT-IDusers", id)
-			redis:sadd("botBOT-IDall", id)
-		elseif Id:match("^-100") then
-			redis:sadd("botBOT-IDsupergroups", id)
-			redis:sadd("botBOT-IDall", id)
-		else
-			redis:sadd("botBOT-IDgroups", id)
-			redis:sadd("botBOT-IDall", id)
-		end
-	end
-	return true
-end
-function rem(id)
-	local Id = tostring(id)
-	if redis:sismember("botBOT-IDall", id) then
-		if Id:match("^(%d+)$") then
-			redis:srem("botBOT-IDusers", id)
-			redis:srem("botBOT-IDall", id)
-		elseif Id:match("^-100") then
-			redis:srem("botBOT-IDsupergroups", id)
-			redis:srem("botBOT-IDall", id)
-		else
-			redis:srem("botBOT-IDgroups", id)
-			redis:srem("botBOT-IDall", id)
-		end
-	end
-	return true
-end
-if redis:get("botBOT-IDaddmsg") then
-				local answer = redis:get("botBOT-IDaddmsgtext") or "Add Shodi :D"
-				send(msg.chat_id_, msg.id_, answer)
-			end
-			elseif text:match("^(addnum) (.*)$") then
-					local matches = text:match("addnum (.*)$")
-					if matches == "on" then
-						redis:set("botBOT-IDaddcontact", true)
-						return send(msg.chat_id_, msg.id_, "<i>Ersale shomare: on</i>")
-					elseif matches == "off" then
-						redis:del("botBOT-IDaddcontact")
-						return send(msg.chat_id_, msg.id_, "<i>Ersale Shomare: off</i>")
-					end
-	elseif text:match("^(addall) (%d+)$") then
-					local matches = text:match("%d+")
-					local list = {redis:smembers("botBOT-IDgroups"),redis:smembers("botBOT-IDsupergroups")}
-					for a, b in pairs(list) do
-						for i, v in pairs(b) do 
-							tdcli_function ({
-								ID = "AddChatMember",
-								chat_id_ = v,
-								user_id_ = matches,
-								forward_limit_ =  50
-							}, dl_cb, nil)
-						end	
-					end
-					return send(msg.chat_id_, msg.id_, "<i>add all anjam shod</i>")	
+
 function run(msg,matches)
   if matches[1] == "setphoto" and msg.reply_id and is_sudo(msg) then
     load_photo(msg.reply_id, set_bot_photo, msg)
